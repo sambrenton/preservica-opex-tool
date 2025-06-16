@@ -1,9 +1,12 @@
-# franko b config
 from opex.util import AssetInfo
 import re
 from os.path import exists
 
-GET_ID_EXT = re.compile(r'((FB(?:-\d+)+)-\d\d\d+)\.([0-9a-zA-Z_]+)$')
+GET_ID_EXT = re.compile(r'([0-9a-zA-Z_]+(?:-\d+)+)-\d\d\d+)\.([0-9a-zA-Z_]+)$')
+
+CONTAINER = 'opex_tc'
+
+LINK_ON_DIRS = True
 
 def to_calm_id(name):
     # CALM ids user forward slash, not dash
@@ -25,7 +28,7 @@ def get_info_for_file(path):
 
     md5file = path.replace(ext, 'md5')
 
-    if exists(md5file):
+    if ext not in ('mp4', 'mp3') and exists(md5file):
         fixity_type = 'MD5'
         fixity = open(md5file, 'r').read()
         if len(fixity) > 32:
@@ -41,7 +44,7 @@ def get_info_for_file(path):
         filename=asset_id + '.' + ext,
         asset_id=to_calm_id(asset_id),
         source_path=path,
-        is_access="Preservica_access" in path,
+        is_access= ext in ('mp4', 'mp3'),
         fixity_type=fixity_type,
         fixity=fixity
     )
